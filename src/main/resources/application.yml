@@ -1,0 +1,19 @@
+spring:
+  session:
+    jdbc:
+      table-name: "user_session"
+    timeout: 604800
+  datasource:
+    jdbc-url: jdbc:postgresql://localhost:5432/tvmedicine
+    username: root
+    password: 123123
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+server:
+  servlet:
+    session:
+      cookie:
+        name: SESSIONID
+  port: 8085
