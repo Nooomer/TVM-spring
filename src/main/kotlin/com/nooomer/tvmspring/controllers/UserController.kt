@@ -5,6 +5,7 @@ import com.nooomer.tvmspring.dto.UsersDto
 import com.nooomer.tvmspring.dto.UsersRegistrationDto
 import com.nooomer.tvmspring.services.UserService
 import jakarta.servlet.http.HttpServletRequest
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -17,18 +18,19 @@ class UserController(var userService: UserService) {
     }
 
     @GetMapping("/logout")
-    fun logout(request: HttpServletRequest): ResponseEntity.BodyBuilder {
-        userService.logout(request)
-        return ResponseEntity.ok()
+    fun logout(request: HttpServletRequest): ResponseEntity<Any> {
+        userService.logout()
+        return ResponseEntity.status(HttpStatus.OK).build()
     }
 
     @GetMapping("/{phoneNumber}")
     fun getUsersByPhoneNumber(@PathVariable phoneNumber: String): ResponseEntity<UsersDto> {
         return ResponseEntity.ok(userService.getUserByPhoneNumber(phoneNumber))
     }
+
     @GetMapping("/me")
     fun getCurrentUser(request: HttpServletRequest): ResponseEntity<UsersDto> {
-        return ResponseEntity.ok(userService.getCurrentUser(request))
+        return ResponseEntity.ok(userService.getCurrentUser())
     }
 
     @PutMapping()

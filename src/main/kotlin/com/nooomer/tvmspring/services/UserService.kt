@@ -7,13 +7,14 @@ import com.nooomer.tvmspring.dto.LoginDataDto
 import com.nooomer.tvmspring.dto.UserModifyDto
 import com.nooomer.tvmspring.dto.UsersDto
 import com.nooomer.tvmspring.dto.UsersRegistrationDto
+import com.nooomer.tvmspring.exceptions.AlreadyAuthorizeException
+import com.nooomer.tvmspring.exceptions.NotAuthorizeException
 import com.nooomer.tvmspring.exceptions.UserNotFoundException
-import jakarta.servlet.http.HttpServletRequest
+import com.nooomer.tvmspring.services.helpers.SecurityContextSessionHelper
 import jakarta.transaction.Transactional
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
-import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -23,6 +24,7 @@ class UserService(
     var usersRepository: UsersRepository,
     val authManager: AuthenticationManager,
     val passwordEncoder: PasswordEncoder,
+    val securityContextSessionHelper: SecurityContextSessionHelper,
 ) {
 
     fun User.toUserDto() = UsersDto(
@@ -105,29 +107,47 @@ class UserService(
         }.toUserDto()
     }
 
-    private fun getCurrentUserPhone(request: HttpServletRequest): Any? {
-        return (request.session.getAttribute("SPRING_SECURITY_CONTEXT") as SecurityContext).authentication.principal
+    private fun getCurrentUserPhone(): Any? {
+        return securityContextSessionHelper.getSessionData().authentication.principal
     }
 
     @Transactional
-    fun getCurrentUser(request: HttpServletRequest): UsersDto {
-        val user: User = getCurrentUserPhone(request) as User
+    fun getCurrentUser(): UsersDto {
+        val user: User = getCurrentUserPhone() as User
         return usersRepository.findByPhoneNumberP(user.phoneNumberP).orElseThrow {
             UserNotFoundException("User with phone=$user not found")
         }.toUserDto()
     }
 
-    fun login(loginData: LoginDataDto, request: HttpServletRequest): UsersDto {
+    private fun checkAlreadyLogin(): Boolean {
+        try {
+            securityContextSessionHelper.getSessionData()
+        } catch (ex: NotAuthorizeException) {
+            return false
+        }
+        return true
+    }
+
+    fun login(loginData: LoginDataDto): UsersDto {
+        if (checkAlreadyLogin()) {
+            throw AlreadyAuthorizeException("You already login")
+        }
+        authenticateAndSetContext(loginData)
+        securityContextSessionHelper.setSessionData(SecurityContextHolder.getContext())
+        return getCurrentUser()
+    }
+
+    private fun authenticateAndSetContext(loginData: LoginDataDto) {
         val authentication: Authentication =
             authManager.authenticate(UsernamePasswordAuthenticationToken(loginData.phoneNumber, loginData.password))
         SecurityContextHolder.getContext().authentication = authentication
-        request.session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext())
-        return getCurrentUser(request)
     }
 
-    fun logout(request: HttpServletRequest) {
-        SecurityContextHolder.getContext().authentication = null
-        request.session.invalidate()
+    fun logout() {
+        if (!checkAlreadyLogin()) {
+            throw NotAuthorizeException("you must be logged in to be able to log out")
+        }
+        securityContextSessionHelper.deleteSession()
     }
 
 }

@@ -17,12 +17,31 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(value = [UserNotFoundException::class])
     protected fun handleUserNotFound(ex: RuntimeException, request: WebRequest): ResponseEntity<Any>? {
         val status: HttpStatus = HttpStatus.NOT_FOUND
-        val error = ErrorDto(
-            LocalDateTime.now().toString(), status.value(), ex.javaClass.simpleName,
-            ex.message!!, request.getDescription(false).split("=".toRegex()).dropLastWhile { it.isEmpty() }
-                .toTypedArray()[1]
-        )
+        val error = buildErrorDto(status, ex, request)
+        return handleExceptionInternal(ex, error, HttpHeaders(), status, request)
+    }
+
+    @ExceptionHandler(value = [NotAuthorizeException::class])
+    protected fun handleUserNotAuth(ex: RuntimeException, request: WebRequest): ResponseEntity<Any>? {
+        val status: HttpStatus = HttpStatus.UNAUTHORIZED
+        val error = buildErrorDto(status, ex, request)
         log.error(ex.message, ex)
         return handleExceptionInternal(ex, error, HttpHeaders(), status, request)
+    }
+    @ExceptionHandler(value = [AlreadyAuthorizeException::class])
+    protected fun handleUserAlreadyAuth(ex: RuntimeException, request: WebRequest): ResponseEntity<Any>? {
+        val status: HttpStatus = HttpStatus.CONFLICT
+        val error = buildErrorDto(status, ex, request)
+        log.error(ex.message, ex)
+        return handleExceptionInternal(ex, error, HttpHeaders(), status, request)
+    }
+
+    private fun buildErrorDto(status: HttpStatus, ex: RuntimeException, request: WebRequest, ): ErrorDto {
+        return ErrorDto(LocalDateTime.now().toString(),
+            status.value(),
+            ex.javaClass.simpleName,
+            ex.message!!,
+            request.getDescription(false).split("=".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
+        )
     }
 }
