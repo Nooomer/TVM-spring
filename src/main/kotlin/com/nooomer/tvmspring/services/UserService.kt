@@ -79,7 +79,7 @@ class UserService(
         }
         return list
     }
-
+//for push
     fun modifyUserByPhone(userModifyDto: UserModifyDto): UsersDto {
         val user = usersRepository.findByPhoneNumberP(userModifyDto.phoneNumber).orElseThrow {
             UserNotFoundException("User with phone number ${userModifyDto.phoneNumber} not found")
