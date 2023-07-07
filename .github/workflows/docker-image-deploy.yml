@@ -26,7 +26,8 @@ jobs:
         run: ./gradlew build -x test
         
       - name: Build Docker image
-        run: docker build -t tvm-spring:latest .
+        run: cd
+            docker build -t tvm-spring:latest .
 
       - name: Save Docker image as tar file
         run: docker save -o my-image.tar tvm-spring:latest
