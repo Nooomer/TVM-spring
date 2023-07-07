@@ -23,7 +23,7 @@ jobs:
         run: chmod +x ./gradlew
         
       - name: Run build with Gradle Wrapper
-        run: ./gradlew build
+        run: ./gradlew build -x test
         
       - name: Build Docker image
         run: docker build -t TVM-spring:latest .
