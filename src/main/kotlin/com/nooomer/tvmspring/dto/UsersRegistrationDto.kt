@@ -2,9 +2,6 @@ package com.nooomer.tvmspring.dto
 
 import java.io.Serializable
 
-/**
- * A DTO for the {@link com.nooomer.tvmspring.db.models.Users} entity
- */
 data class UsersRegistrationDto(
     val surename: String,
     val name: String,

@@ -2,9 +2,6 @@ package com.nooomer.tvmspring.dto
 
 import java.io.Serializable
 
-/**
- * A DTO for the {@link com.nooomer.tvmspring.db.models.Treatment} entity
- */
 data class TreatmentDto(
     val id: Int? = null,
     val startDate: String? = null,
@@ -14,5 +11,5 @@ data class TreatmentDto(
     val chatsById: MutableCollection<ChatsDto?>? = null,
     val chats: ChatsDto? = null,
     val users: UsersDto? = null,
-    val usersByDoctorId: UsersDto? = null
+    val usersByDoctorId: UsersDto? = null,
 ) : Serializable
