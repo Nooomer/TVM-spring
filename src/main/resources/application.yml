@@ -5,8 +5,8 @@ spring:
     timeout: 604800
   datasource:
     jdbc-url: jdbc:postgresql://localhost:5432/tvmedicine
-    username: root
-    password: 123123
+    username: postgres
+    password: superpassword132
   jpa:
     show-sql: true
     hibernate:
@@ -16,4 +16,4 @@ server:
     session:
       cookie:
         name: SESSIONID
-  port: 8085
+  port: 80
