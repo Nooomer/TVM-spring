@@ -48,3 +48,9 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
+tasks.jar {
+        enabled = true
+        archiveFileName.set("app.jar")
+        exclude("**/*-plain.jar")
+}

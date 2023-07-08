@@ -4,7 +4,7 @@ spring:
       table-name: "user_session"
     timeout: 604800
   datasource:
-    jdbc-url: jdbc:postgresql://localhost:5432/tvmedicine
+    jdbc-url: jdbc:postgresql://tvm-database:5432/tvmedicine
     username: postgres
     password: superpassword132
   jpa:
