@@ -30,7 +30,7 @@ jobs:
           docker build -t tvm-spring:latest .
 
       - name: Save Docker image as tar file
-        run: docker save -o my-image.tar tvm-spring:latest
+        run: docker save -o tvm-spring.tar tvm-spring:latest
 
       - name: Transfer Docker image to remote server
         run: |
