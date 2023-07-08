@@ -27,7 +27,6 @@ jobs:
         
       - name: Build Docker image
         run: |
-          cd ~/TVM-spring
           docker build -t tvm-spring:latest .
 
       - name: Save Docker image as tar file
