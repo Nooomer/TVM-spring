@@ -16,4 +16,5 @@ server:
     session:
       cookie:
         name: SESSIONID
+    context-path: /api/v1
   port: 80
