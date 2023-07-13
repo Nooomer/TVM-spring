@@ -3,22 +3,20 @@ package com.nooomer.tvmspring.controllers
 import com.nooomer.tvmspring.dto.LoginDataDto
 import com.nooomer.tvmspring.dto.UsersDto
 import com.nooomer.tvmspring.services.UserService
-import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("api/v1/user/login")
+@RequestMapping("/user/login")
 class LoginController(var userService: UserService) {
-//to push again
     @GetMapping
-    fun alreadyLogin(): ResponseEntity<UsersDto> {
-       return ResponseEntity.ok(userService.getCurrentUser())
+    fun alreadyLogin(): ResponseEntity<Boolean> {
+        return ResponseEntity.ok(userService.checkAlreadyLogin())
     }
 
     @PostMapping
     fun login(@RequestBody loginDataDto: LoginDataDto): ResponseEntity<UsersDto> {
-       return ResponseEntity.ok(userService.login(loginDataDto))
+        return ResponseEntity.ok(userService.login(loginDataDto))
     }
 
 }
