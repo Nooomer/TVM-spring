@@ -14,7 +14,7 @@ import java.time.LocalDateTime
 class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
     private val log = LoggerFactory.getLogger(this.javaClass)
 
-    @ExceptionHandler(value = [UserNotFoundException::class])
+    @ExceptionHandler(value = [UserNotFoundException::class, TreatmentNotFoundException::class, SymptomNotFound::class])
     protected fun handleUserNotFound(ex: RuntimeException, request: WebRequest): ResponseEntity<Any>? {
         val status: HttpStatus = HttpStatus.NOT_FOUND
         val error = buildErrorDto(status, ex, request)
