@@ -1,6 +1,5 @@
 package com.nooomer.tvmspring.services
 
-import com.nooomer.tvmspring.db.models.Role
 import com.nooomer.tvmspring.db.models.User
 import com.nooomer.tvmspring.db.repositories.UsersRepository
 import com.nooomer.tvmspring.dto.LoginDataDto
@@ -10,6 +9,9 @@ import com.nooomer.tvmspring.dto.UsersRegistrationDto
 import com.nooomer.tvmspring.exceptions.AlreadyAuthorizeException
 import com.nooomer.tvmspring.exceptions.NotAuthorizeException
 import com.nooomer.tvmspring.exceptions.UserNotFoundException
+import com.nooomer.tvmspring.services.helpers.Converter.toUser
+import com.nooomer.tvmspring.services.helpers.Converter.toUserDto
+import com.nooomer.tvmspring.services.helpers.Converter.toUserDtoList
 import com.nooomer.tvmspring.services.helpers.SecurityContextSessionHelper
 import jakarta.transaction.Transactional
 import org.springframework.security.authentication.AuthenticationManager
@@ -26,29 +28,6 @@ class UserService(
     val passwordEncoder: PasswordEncoder,
     val securityContextSessionHelper: SecurityContextSessionHelper,
 ) {
-
-    fun User.toUserDto() = UsersDto(
-        id = this.id!!,
-        surename = this.surename,
-        name = this.name,
-        sName = this.sName,
-        phoneNumber = this.phoneNumberP,
-        insurancePolicyNumber = this.insurancePolicyNumber,
-        password = this.password,
-        userType = this.userType,
-        roles = this.roles
-    )
-
-    fun UsersRegistrationDto.toUser() = User(
-        surename = surename,
-        name = name,
-        sName = sName,
-        phoneNumberP = phoneNumber,
-        insurancePolicyNumber = insurancePolicyNumber,
-        passwordP = password,
-        userType = userType,
-        roles = mutableSetOf(Role(role))
-    )
 
     fun UserModifyDto.checkEqual(user: User): User {
         if ((this.name != user.name) and (this.name != null)) {
@@ -72,14 +51,6 @@ class UserService(
         return user
     }
 
-    fun MutableList<User>.toUserDtoList(): MutableList<UsersDto> {
-        val list = mutableListOf<UsersDto>()
-        this.forEach {
-            list.add(it.toUserDto())
-        }
-        return list
-    }
-//for push
     fun modifyUserByPhone(userModifyDto: UserModifyDto): UsersDto {
         val user = usersRepository.findByPhoneNumberP(userModifyDto.phoneNumber).orElseThrow {
             UserNotFoundException("User with phone number ${userModifyDto.phoneNumber} not found")
@@ -90,7 +61,7 @@ class UserService(
         return newUser.toUserDto()
     }
 
-    fun getAllUsers(): MutableList<UsersDto> {
+    fun getAllUsers(): List<UsersDto> {
         return usersRepository.findAll().toUserDtoList()
     }
 
@@ -112,14 +83,22 @@ class UserService(
     }
 
     @Transactional
-    fun getCurrentUser(): UsersDto {
+    fun getCurrentUserDto(): UsersDto {
         val user: User = getCurrentUserPhone() as User
         return usersRepository.findByPhoneNumberP(user.phoneNumberP).orElseThrow {
             UserNotFoundException("User with phone=$user not found")
         }.toUserDto()
     }
 
-    private fun checkAlreadyLogin(): Boolean {
+    @Transactional
+    fun getCurrentUser(): User {
+        val user: User = getCurrentUserPhone() as User
+        return usersRepository.findByPhoneNumberP(user.phoneNumberP).orElseThrow {
+            UserNotFoundException("User with phone=$user not found")
+        }
+    }
+
+    fun checkAlreadyLogin(): Boolean {
         try {
             securityContextSessionHelper.getSessionData()
         } catch (ex: NotAuthorizeException) {
@@ -134,7 +113,7 @@ class UserService(
         }
         authenticateAndSetContext(loginData)
         securityContextSessionHelper.setSessionData(SecurityContextHolder.getContext())
-        return getCurrentUser()
+        return getCurrentUserDto()
     }
 
     private fun authenticateAndSetContext(loginData: LoginDataDto) {

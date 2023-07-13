@@ -7,13 +7,14 @@ import com.nooomer.tvmspring.services.UserService
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/v1/user")
+@RequestMapping("/user")
 class UserController(var userService: UserService) {
     @GetMapping()
-    fun getUsers(): ResponseEntity<MutableList<UsersDto>> {
+    fun getUsers(): ResponseEntity<List<UsersDto>> {
         return ResponseEntity.ok(userService.getAllUsers())
     }
 
@@ -30,15 +31,17 @@ class UserController(var userService: UserService) {
 
     @GetMapping("/me")
     fun getCurrentUser(request: HttpServletRequest): ResponseEntity<UsersDto> {
-        return ResponseEntity.ok(userService.getCurrentUser())
+        return ResponseEntity.ok(userService.getCurrentUserDto())
     }
 
-    @PutMapping()
+    @PutMapping("/admin")
+    @PreAuthorize("hasRole('ADMIN')")
     fun addUser(@RequestBody usersRegistrationDto: UsersRegistrationDto): ResponseEntity<UsersDto> {
         return ResponseEntity.ok(userService.addUser(usersRegistrationDto))
     }
 
     @PatchMapping()
+    @PreAuthorize("hasRole('ADMIN')")
     fun modifyUser(@RequestBody userModifyDto: UserModifyDto): ResponseEntity<UsersDto> {
         return ResponseEntity.ok(userService.modifyUserByPhone(userModifyDto))
     }
