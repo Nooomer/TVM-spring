@@ -48,8 +48,7 @@ class SecurityConfig(private val usersRepository: UsersRepository) {
             .csrf { obj: CsrfConfigurer<HttpSecurity> -> obj.disable() }
             .authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers("/api/v1/user/**").permitAll()
-                    .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                    .requestMatchers("/user/login", "/user/logout", "/error", "/symptoms").permitAll()
                     .anyRequest().authenticated()
             }
         return http.build()
