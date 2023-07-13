@@ -12,6 +12,6 @@ data class UserModifyDto(
     var insurancePolicyNumber: String?,
     var password: String?,
     var userType: String?,
-    var messagesById: MutableCollection<MessagesDto?>?,
+    var messagesById: MutableCollection<MessageDto?>?,
     var treatmentsById: MutableCollection<TreatmentDto?>?,
 ) : Serializable

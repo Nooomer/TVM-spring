@@ -4,14 +4,9 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "chats")
-open class Chat: Base() {
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "treatment_id")
-    open var treatment: Treatment? = null
-
-    @OneToMany(mappedBy = "chat")
-    open var messages: MutableSet<Message> = mutableSetOf()
-
-    @OneToMany(mappedBy = "chat")
-    open var treatments: MutableSet<Treatment> = mutableSetOf()
+open class Chat(
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "messages_id", nullable = true)
+    open var message: MutableSet<Message>?,
+) : Base() {
 }

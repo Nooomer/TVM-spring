@@ -4,29 +4,32 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "treatment")
-open class Treatment: Base() {
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "chat_id", nullable = false)
-    open var chat: Chat? = null
+open class Treatment(
+    @OneToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "chat_id", nullable = true)
+    open var chat: Chat?,
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "patient_id", nullable = false)
-    open var patient: com.nooomer.tvmspring.db.models.User? = null
+    open var patient: User,
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "doctor_id", nullable = false)
-    open var doctor: com.nooomer.tvmspring.db.models.User? = null
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "doctor_id", nullable = true)
+    open var doctor: User?,
 
-    @Column(name = "start_date", nullable = false, length = Integer.MAX_VALUE)
-    open var startDate: String? = null
+    @OneToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "conclusion_id", nullable = true)
+    open var conclusion: Conclusion?,
 
-    @Column(name = "symptoms_id", nullable = false)
-    open var symptomsId: Int? = null
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sound_link_id", nullable = true)
+    open var sound: MutableSet<Sound>?,
 
-    @Column(name = "sound_server_link_id", nullable = false, length = Integer.MAX_VALUE)
-    open var soundServerLinkId: String? = null
-
-    @Column(name = "conclusion_id", nullable = false)
-    open var conclusionId: Int? = null
-}
+    @ManyToMany
+    @JoinTable(
+        name = "treatment_symptom",
+        joinColumns = [JoinColumn(name = "treatment_id")],
+        inverseJoinColumns = [JoinColumn(name = "symptom_id")]
+    )
+    open var symptoms: MutableSet<Symptom> = mutableSetOf(),
+) : Base()

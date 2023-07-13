@@ -1,25 +1,20 @@
 package com.nooomer.tvmspring.db.models
 
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.Table
+import java.util.*
 
 @Entity
 @Table(name = "messages")
-open class Message: Base() {
+open class Message(
     @Column(name = "message_text", nullable = false, length = Integer.MAX_VALUE)
-    open var messageText: String? = null
+    open var messageText: String,
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "chat_id", nullable = false)
-    open var chat: Chat? = null
+    @Column(name = "from_id", nullable = false, length = Integer.MAX_VALUE)
+    open var from: UUID,
 
-    @Column(name = "send_time", nullable = false, length = Integer.MAX_VALUE)
-    open var sendTime: String? = null
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "from_id", nullable = false)
-    open var from: com.nooomer.tvmspring.db.models.User? = null
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "to_id", nullable = false)
-    open var to: com.nooomer.tvmspring.db.models.User? = null
+    @Column(name = "to_id", nullable = false, length = Integer.MAX_VALUE)
+    open var to: UUID,
+) : Base() {
 }

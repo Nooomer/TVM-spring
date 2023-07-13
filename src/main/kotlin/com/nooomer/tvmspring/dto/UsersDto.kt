@@ -14,6 +14,6 @@ data class UsersDto(
     var password: String,
     var userType: String,
     var roles: MutableSet<Role>,
-    var messagesById: MutableCollection<MessagesDto?>? = null,
+    var messagesById: MutableCollection<MessageDto?>? = null,
     var treatmentsById: MutableCollection<TreatmentDto?>? = null,
 ) : Serializable

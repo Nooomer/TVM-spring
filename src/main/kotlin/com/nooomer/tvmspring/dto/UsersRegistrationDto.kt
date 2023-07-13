@@ -3,14 +3,14 @@ package com.nooomer.tvmspring.dto
 import java.io.Serializable
 
 data class UsersRegistrationDto(
-    val surename: String,
-    val name: String,
-    val sName: String,
-    val phoneNumber: String,
-    val insurancePolicyNumber: String,
-    val password: String,
-    val userType: String,
-    val role: String,
-    val messagesById: MutableCollection<MessagesDto?>?,
-    val treatmentsById: MutableCollection<TreatmentDto?>?,
+    var surename: String,
+    var name: String,
+    var sName: String,
+    var phoneNumber: String,
+    var insurancePolicyNumber: String,
+    var password: String,
+    var userType: String,
+    var role: String,
+    var messagesById: MutableCollection<MessageDto?>?,
+    var treatmentsById: MutableCollection<TreatmentDto?>?,
 ) : Serializable
