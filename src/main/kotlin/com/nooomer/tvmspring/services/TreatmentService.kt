@@ -38,6 +38,9 @@ class TreatmentService(
             "ROLE_PATIENT" -> {
                 data = treatmentRepository.findByPatientId(user.id).toTreatmentDto()
             }
+            "ROLE_ADMIN" -> {
+                data = getAllTreatment()
+            }
         }
         return if (data.isEmpty()) {
             if(role == "ROLE_DOCTOR") {

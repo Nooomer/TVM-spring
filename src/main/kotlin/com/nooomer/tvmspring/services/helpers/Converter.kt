@@ -14,8 +14,23 @@ object Converter {
         insurancePolicyNumber = this.insurancePolicyNumber,
         password = this.password,
         userType = this.userType,
-        roles = this.roles
+        roles = this.roles.toRoleDto()
     )
+
+    fun Role.toRoleDto() = RoleDto(
+        id = id!!,
+        createdDate = createdDate!!,
+        updatedDate = updatedDate,
+        name = name
+    )
+
+    fun MutableSet<Role>.toRoleDto(): MutableSet<RoleDto> {
+        val newSet: MutableSet<RoleDto> = mutableSetOf()
+        this.forEach {
+            newSet.add(it.toRoleDto())
+        }
+        return newSet
+    }
 
     fun UsersRegistrationDto.toUser() = User(
         surename = surename,
@@ -137,8 +152,20 @@ object Converter {
         insurancePolicyNumber = insurancePolicyNumber,
         passwordP = password,
         userType = userType,
-        roles = roles
+        roles = roles.toRole()
     )
+
+    fun RoleDto.toRole() = Role(
+        name = name
+    )
+
+    fun MutableSet<RoleDto>.toRole(): MutableSet<Role> {
+        val newSet: MutableSet<Role> = mutableSetOf()
+        this.forEach {
+            newSet.add(it.toRole())
+        }
+        return newSet
+    }
 
     fun NewTreatmentDto.toTreatment() = Treatment(
         chat = null,

@@ -13,7 +13,7 @@ data class UsersDto(
     var insurancePolicyNumber: String,
     var password: String,
     var userType: String,
-    var roles: MutableSet<Role>,
+    var roles: MutableSet<RoleDto>,
     var messagesById: MutableCollection<MessageDto?>? = null,
     var treatmentsById: MutableCollection<TreatmentDto?>? = null,
 ) : Serializable
