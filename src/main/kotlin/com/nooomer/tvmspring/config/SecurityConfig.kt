@@ -15,6 +15,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 @EnableWebSecurity
 @Configuration
@@ -30,7 +33,10 @@ class SecurityConfig(private val usersRepository: UsersRepository) {
     fun authenticationManager(
         http: HttpSecurity,
     ): AuthenticationManager {
-        return http.getSharedObject(AuthenticationManagerBuilder::class.java)
+        return http
+            .cors()
+            .and()
+            .getSharedObject(AuthenticationManagerBuilder::class.java)
             .userDetailsService(UserDetailsService { username: String? ->
                 usersRepository.findByPhoneNumberP(
                     username!!
@@ -39,6 +45,16 @@ class SecurityConfig(private val usersRepository: UsersRepository) {
             })
             .and()
             .build()
+    }
+
+    @Bean
+    fun corsConfigurationSource(): CorsConfigurationSource {
+        val configuration = CorsConfiguration()
+        configuration.allowedHeaders = listOf("AppType:Mobile", "AppType:Test")
+        val source = UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration("/**", configuration)
+
+        return source
     }
 
     @Bean
