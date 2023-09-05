@@ -2,10 +2,7 @@ package com.nooomer.tvmspring.services
 
 import com.nooomer.tvmspring.db.models.User
 import com.nooomer.tvmspring.db.repositories.UsersRepository
-import com.nooomer.tvmspring.dto.LoginDataDto
-import com.nooomer.tvmspring.dto.UserModifyDto
-import com.nooomer.tvmspring.dto.UsersDto
-import com.nooomer.tvmspring.dto.UsersRegistrationDto
+import com.nooomer.tvmspring.dto.*
 import com.nooomer.tvmspring.exceptions.AlreadyAuthorizeException
 import com.nooomer.tvmspring.exceptions.NotAuthorizeException
 import com.nooomer.tvmspring.exceptions.UserNotFoundException
@@ -27,6 +24,7 @@ class UserService(
     val authManager: AuthenticationManager,
     val passwordEncoder: PasswordEncoder,
     val securityContextSessionHelper: SecurityContextSessionHelper,
+    val roleService: RoleService,
 ) {
 
     fun UserModifyDto.checkEqual(user: User): User {
@@ -129,4 +127,24 @@ class UserService(
         securityContextSessionHelper.deleteSession()
     }
 
+    fun setRole(setNewRoleDto: SetNewRoleDto): UsersDto {
+        val role = roleService.getRoleByName(setNewRoleDto.roleName)
+        val user = usersRepository.findById(setNewRoleDto.userId).orElseThrow{
+            UserNotFoundException("User with id=${setNewRoleDto.userId} not found")
+        }
+            user.roles.add(role)
+        val newUser = usersRepository.save(user)
+        return newUser.toUserDto()
+    }
+
+    fun deleteRoleForUser(setNewRoleDto: SetNewRoleDto): UsersDto {
+        val role = roleService.getRoleByName(setNewRoleDto.roleName)
+        val user = usersRepository.findById(setNewRoleDto.userId).orElseThrow{
+            UserNotFoundException("User with id=${setNewRoleDto.userId} not found")
+        }
+        user.roles.remove(role)
+        val newUser = usersRepository.save(user)
+        return newUser.toUserDto()
+    }
 }
+
