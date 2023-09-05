@@ -4,9 +4,11 @@ import com.nooomer.tvmspring.dto.NewTreatmentDto
 import com.nooomer.tvmspring.dto.TreatmentDto
 import com.nooomer.tvmspring.services.TreatmentService
 import com.nooomer.tvmspring.services.helpers.interfaces.access.annotation.IsAdmin
-import com.nooomer.tvmspring.services.helpers.interfaces.access.annotation.IsPatient
+import com.nooomer.tvmspring.services.helpers.interfaces.access.annotation.IsAdminOrDoctor
+import com.nooomer.tvmspring.services.helpers.interfaces.access.annotation.IsAdminOrPatient
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @RestController
 @RequestMapping("/treatment")
@@ -26,10 +28,15 @@ class TreatmentController(
     }
 
     @PostMapping
-    @IsAdmin
-    @IsPatient
+    @IsAdminOrPatient
     fun addTreatment(@RequestBody treatmentDto: NewTreatmentDto): ResponseEntity<TreatmentDto> {
         return ResponseEntity.ok(treatmentService.addTreatment(treatmentDto))
+    }
+
+    @PatchMapping
+    @IsAdminOrDoctor
+    fun assignDoctor(@RequestBody treatmentId: UUID): ResponseEntity<TreatmentDto> {
+        return ResponseEntity.ok(treatmentService.setDoctor(treatmentId))
     }
 
 }

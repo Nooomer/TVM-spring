@@ -10,6 +10,7 @@ import com.nooomer.tvmspring.exceptions.TreatmentNotFoundException
 import com.nooomer.tvmspring.services.helpers.Converter.toTreatment
 import com.nooomer.tvmspring.services.helpers.Converter.toTreatmentDto
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class TreatmentService(
@@ -27,6 +28,11 @@ class TreatmentService(
         }
     }
 
+    fun getTreatmentById(treatmentId: UUID): TreatmentDto {
+       return treatmentRepository.findById(treatmentId).orElseThrow{
+            TreatmentNotFoundException("Treatmetn with id=${treatmentId} not found")
+        }.toTreatmentDto()
+    }
     fun getAllTreatmentForUser(): List<TreatmentDto> {
         val user = userService.getCurrentUserDto()
         var data = listOf<TreatmentDto>()
@@ -69,4 +75,14 @@ class TreatmentService(
        return treatmentRepository.save(newTreatment).toTreatmentDto()
     }
 
+
+    fun setDoctor(treatmentId: UUID): TreatmentDto {
+        val currentUser = userService.getCurrentUser()
+        val treatment = treatmentRepository.findById(treatmentId).orElseThrow {
+            TreatmentNotFoundException("Treatment with id=${treatmentId} not found")
+        }
+        treatment.doctor = currentUser
+        val newTreatment = treatmentRepository.save(treatment)
+        return newTreatment.toTreatmentDto()
+    }
 }
