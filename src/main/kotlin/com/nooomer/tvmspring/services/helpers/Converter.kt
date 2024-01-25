@@ -26,10 +26,12 @@ object Converter {
 
     fun MutableSet<Role>.toRoleDto(): MutableSet<RoleDto> {
         val newSet: MutableSet<RoleDto> = mutableSetOf()
-        this.forEach {
+        /*this.forEach {
             newSet.add(it.toRoleDto())
+        }*/
+        return this.mapTo(newSet){
+            it.toRoleDto()
         }
-        return newSet
     }
 
     fun UsersRegistrationDto.toUser() = User(
@@ -67,18 +69,20 @@ object Converter {
 
     fun MutableSet<Symptom>?.toSymptomDto(): MutableSet<SymptomDto> {
         val newSet: MutableSet<SymptomDto> = mutableSetOf()
-        this?.forEach {
+        return this?.mapTo(newSet) {
+            it.toSymptomDto()
+        }!!
+        /*this?.forEach {
             newSet.add(it.toSymptomDto())
         }
-        return newSet
+        return newSet*/
     }
 
     fun MutableSet<SymptomDto>?.toSymptom(): MutableSet<Symptom> {
         val newSet: MutableSet<Symptom> = mutableSetOf()
-        this?.forEach {
-            newSet.add(it.toSymptom())
+        return this!!.mapTo(newSet){
+            it.toSymptom()
         }
-        return newSet
     }
 
     fun SymptomDto.toSymptom() = Symptom(
@@ -91,10 +95,9 @@ object Converter {
 
     fun MutableSet<Sound>?.toSoundDto(): MutableSet<SoundDto> {
         val newSet: MutableSet<SoundDto> = mutableSetOf()
-        this?.forEach {
-            newSet.add(it.toSoundDto())
+        return this!!.mapTo(newSet){
+            it.toSoundDto()
         }
-        return newSet
     }
 
     fun Sound.toSoundDto() = SoundDto(
