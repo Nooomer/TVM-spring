@@ -60,19 +60,25 @@ class TreatmentService(
         }
     }
 
+    private fun createNewEmptyChat(): Chat {
+        return chatsRepository.save(Chat(null))
+    }
+
     fun addTreatment(treatmentDto: NewTreatmentDto): TreatmentDto {
-        val currentUser = userService.getCurrentUserDto()
-        treatmentDto.patient = currentUser
+        val currentUser = userService.getCurrentUser()
         val newTreatment = treatmentDto.toTreatment()
         val usedSymptoms: MutableSet<Symptom> = mutableSetOf()
         treatmentDto.symptomIds.forEach {
-            usedSymptoms.add(symptomRepository.findById(it).orElseThrow{
+            usedSymptoms.add(symptomRepository.findById(it).orElseThrow {
                 throw SymptomNotFound("Symptom with id=${it} not found")
             })
         }
-        newTreatment.symptoms = usedSymptoms
-        newTreatment.patient = userService.getCurrentUser()
-       return treatmentRepository.save(newTreatment).toTreatmentDto()
+        with(newTreatment) {
+            symptoms = usedSymptoms
+            patient = currentUser
+            chat = createNewEmptyChat()
+        }
+        return treatmentRepository.save(newTreatment).toTreatmentDto()
     }
 
 
