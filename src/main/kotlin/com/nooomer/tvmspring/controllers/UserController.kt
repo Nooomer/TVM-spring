@@ -37,13 +37,13 @@ class UserController(var userService: UserService) {
     }
 
     @PutMapping("/admin")
-    @PreAuthorize("hasRole('ADMIN')")
+    @IsAdmin
     fun addUser(@RequestBody usersRegistrationDto: UsersRegistrationDto): ResponseEntity<UsersDto> {
         return ResponseEntity.ok(userService.addUser(usersRegistrationDto))
     }
 
     @PatchMapping()
-    @PreAuthorize("hasRole('ADMIN')")
+    @IsAdmin
     fun modifyUser(@RequestBody userModifyDto: UserModifyDto): ResponseEntity<UsersDto> {
         return ResponseEntity.ok(userService.modifyUserByPhone(userModifyDto))
     }
