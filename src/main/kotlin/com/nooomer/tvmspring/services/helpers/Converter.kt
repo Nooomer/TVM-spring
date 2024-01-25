@@ -115,6 +115,26 @@ object Converter {
         return newSet
     }
 
+    fun MutableSet<MessageDto>?.toMessage(): MutableSet<Message> {
+        val newSet: MutableSet<Message> = mutableSetOf()
+        this?.map {
+            newSet.add(it.toMessage())
+        }
+        return newSet
+    }
+
+    fun MessageDto.toMessage(): Message {
+        var newMessage = Message(
+            this.messageText,
+            this.from,
+            this.to
+        )
+        newMessage.id = this.id
+        newMessage.createdDate = this.createdDate
+        newMessage.updatedDate = this.updatedDate
+        return newMessage
+    }
+
     fun Chat?.toChatDto(): ChatDto? {
         return if (Objects.isNull(this)) {
             null
@@ -123,9 +143,19 @@ object Converter {
                 id = this?.id!!,
                 createdDate = createdDate!!,
                 updatedDate = updatedDate,
-                message = message.toMessageDto()
+                messages = message.toMessageDto()
             )
         }
+    }
+
+    fun ChatDto?.toChat(): Chat {
+        var newChat = Chat(
+            this?.messages.toMessage()
+        )
+        newChat.id = this?.id
+        newChat.createdDate = this?.createdDate
+        newChat.updatedDate = this?.updatedDate
+        return newChat
     }
 
     fun Conclusion.toConslusionDto() = ConclusionDto(
