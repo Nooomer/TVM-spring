@@ -8,5 +8,5 @@ data class ChatDto(
     var id: UUID,
     var createdDate: LocalDateTime,
     var updatedDate: LocalDateTime?,
-    var message: MutableSet<MessageDto>?,
+    var messages: MutableSet<MessageDto>?,
 ) : Serializable

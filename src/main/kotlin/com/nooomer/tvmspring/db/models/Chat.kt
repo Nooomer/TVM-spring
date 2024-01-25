@@ -7,6 +7,7 @@ import jakarta.persistence.*
 open class Chat(
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "messages_id", nullable = true)
+    @OrderBy("created_date ASC")
     open var message: MutableSet<Message>?,
 ) : Base() {
 }
