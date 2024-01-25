@@ -6,6 +6,7 @@ plugins {
     kotlin("jvm") version "1.8.21"
     kotlin("plugin.spring") version "1.8.21"
     kotlin("plugin.jpa") version "1.8.21"
+    id("org.jetbrains.dokka") version "1.9.0"
 }
 
 group = "com.nooomer"
@@ -30,12 +31,16 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.springframework.boot:spring-boot-starter-websocket")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
     //implementation("javax.xml.bind:jaxb-api")
     runtimeOnly("org.postgresql:postgresql")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
-    implementation ("org.modelmapper:modelmapper:3.1.1")
+    implementation("org.modelmapper:modelmapper:3.1.1")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+    implementation(kotlin("stdlib-jdk8"))
+    implementation("org.tensorflow:tensorflow-lite:+")
 }
 
 tasks.withType<KotlinCompile> {
@@ -50,7 +55,15 @@ tasks.withType<Test> {
 }
 
 tasks.jar {
-        enabled = true
-        archiveFileName.set("app.jar")
-        exclude("**/*-plain.jar")
+    enabled = true
+    archiveFileName.set("app.jar")
+    exclude("**/*-plain.jar")
+}
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.kotlinOptions {
+    jvmTarget = "17"
+}
+val compileTestKotlin: KotlinCompile by tasks
+compileTestKotlin.kotlinOptions {
+    jvmTarget = "17"
 }
