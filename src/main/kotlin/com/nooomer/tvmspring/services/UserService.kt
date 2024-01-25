@@ -115,8 +115,11 @@ class UserService(
     }
 
     private fun authenticateAndSetContext(loginData: LoginDataDto) {
-        val authentication: Authentication =
-            authManager.authenticate(UsernamePasswordAuthenticationToken(loginData.phoneNumber, loginData.password))
+        val authData = UsernamePasswordAuthenticationToken(loginData.phoneNumber, loginData.password)
+        val authentication: Authentication = authManager.authenticate(authData)
+        if(!authentication.isAuthenticated){
+            throw BadCredentialsException("Неправильный логин или пароль")
+        }
         SecurityContextHolder.getContext().authentication = authentication
     }
 
