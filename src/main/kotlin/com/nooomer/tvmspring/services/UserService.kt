@@ -12,6 +12,7 @@ import com.nooomer.tvmspring.services.helpers.Converter.toUserDtoList
 import com.nooomer.tvmspring.services.helpers.SecurityContextSessionHelper
 import jakarta.transaction.Transactional
 import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
@@ -75,7 +76,6 @@ class UserService(
             UserNotFoundException("User with phone number $phoneNumber not found")
         }.toUserDto()
     }
-
     private fun getCurrentUserPhone(): Any? {
         return securityContextSessionHelper.getSessionData().authentication.principal
     }

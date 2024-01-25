@@ -22,7 +22,7 @@ class TreatmentController(
         return ResponseEntity.ok(treatmentService.getAllTreatment())
     }
 
-    @GetMapping()
+    @GetMapping
     fun getAllTreatmentForUser(): ResponseEntity<List<TreatmentDto>> {
         return ResponseEntity.ok(treatmentService.getAllTreatmentForUser())
     }

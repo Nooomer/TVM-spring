@@ -1,6 +1,8 @@
 package com.nooomer.tvmspring.services
 
+import com.nooomer.tvmspring.db.models.Chat
 import com.nooomer.tvmspring.db.models.Symptom
+import com.nooomer.tvmspring.db.repositories.ChatsRepository
 import com.nooomer.tvmspring.db.repositories.SymptomRepository
 import com.nooomer.tvmspring.db.repositories.TreatmentRepository
 import com.nooomer.tvmspring.dto.NewTreatmentDto
@@ -16,28 +18,28 @@ import java.util.*
 class TreatmentService(
     val treatmentRepository: TreatmentRepository,
     val userService: UserService,
-    val symptomRepository: SymptomRepository
+    val symptomRepository: SymptomRepository,
+    val chatsRepository: ChatsRepository,
 ) {
 
     fun getAllTreatment(): List<TreatmentDto> {
         val data = treatmentRepository.findAll()
-        return if (data.isEmpty()) {
+        return data.ifEmpty {
             throw TreatmentNotFoundException("Treatment not found")
-        } else {
-            data.toTreatmentDto()
-        }
+        }.toTreatmentDto()
     }
 
     fun getTreatmentById(treatmentId: UUID): TreatmentDto {
-       return treatmentRepository.findById(treatmentId).orElseThrow{
+       return treatmentRepository.findById(treatmentId).orElseThrow {
             TreatmentNotFoundException("Treatmetn with id=${treatmentId} not found")
         }.toTreatmentDto()
     }
+
     fun getAllTreatmentForUser(): List<TreatmentDto> {
         val user = userService.getCurrentUserDto()
         var data = listOf<TreatmentDto>()
         val role = user.roles.map { it.name }[0]
-        when(role){
+        when (role) {
             "ROLE_DOCTOR" -> {
                 data = treatmentRepository.findByDoctorId(user.id).toTreatmentDto()
             }
@@ -48,15 +50,12 @@ class TreatmentService(
                 data = getAllTreatment()
             }
         }
-        return if (data.isEmpty()) {
-            if(role == "ROLE_DOCTOR") {
+        return data.ifEmpty {
+            if (role == "ROLE_DOCTOR") {
                 throw TreatmentNotFoundException("Treatment for doctor with id=${user.id} not found")
-            }
-            else{
+            } else {
                 throw TreatmentNotFoundException("Treatment for patient with id=${user.id} not found")
             }
-        } else {
-           data
         }
     }
 
