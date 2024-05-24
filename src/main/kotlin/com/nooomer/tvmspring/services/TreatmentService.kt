@@ -2,6 +2,7 @@ package com.nooomer.tvmspring.services
 
 import com.nooomer.tvmspring.db.models.Chat
 import com.nooomer.tvmspring.db.models.Symptom
+import com.nooomer.tvmspring.db.models.Treatment
 import com.nooomer.tvmspring.db.repositories.ChatsRepository
 import com.nooomer.tvmspring.db.repositories.SymptomRepository
 import com.nooomer.tvmspring.db.repositories.TreatmentRepository
@@ -69,6 +70,10 @@ class TreatmentService(
         return chatsRepository.save(Chat(null))
     }
 
+    fun updateTreatmentAfterUploadSound(treatment: Treatment){
+        treatmentRepository.save(treatment)
+    }
+
     fun addTreatment(treatmentDto: NewTreatmentDto): TreatmentDto {
         val currentUser = userService.getCurrentUser()
         val newTreatment = treatmentDto.toTreatment()
@@ -89,9 +94,7 @@ class TreatmentService(
 
     fun setDoctor(treatmentId: UUID): TreatmentDto {
         val currentUser = userService.getCurrentUser()
-        val treatment = treatmentRepository.findById(treatmentId).orElseThrow {
-            TreatmentNotFoundException("Treatment with id=${treatmentId} not found")
-        }
+        val treatment = getTreatmentById(treatmentId)
         treatment.doctor = currentUser
         val newTreatment = treatmentRepository.save(treatment)
         return newTreatment.toTreatmentDto()
