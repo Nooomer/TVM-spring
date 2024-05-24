@@ -40,7 +40,6 @@ dependencies {
     implementation("org.modelmapper:modelmapper:3.1.1")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     implementation(kotlin("stdlib-jdk8"))
-    implementation("org.tensorflow:tensorflow-lite:+")
 }
 
 tasks.withType<KotlinCompile> {
