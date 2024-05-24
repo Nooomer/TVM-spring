@@ -18,7 +18,10 @@ class ChatController(
     }
 
     @PostMapping()
-    fun sendMessage(@PathVariable("treatment-id") id: UUID, @RequestBody message: NewMessageDto): ResponseEntity<ChatDto> {
+    fun sendMessage(
+        @PathVariable("treatment-id") id: UUID,
+        @RequestBody message: NewMessageDto,
+    ): ResponseEntity<ChatDto> {
         return ResponseEntity.ok(chatService.sendMessage(message, id))
     }
 }

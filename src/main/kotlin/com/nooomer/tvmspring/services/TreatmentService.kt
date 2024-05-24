@@ -29,10 +29,16 @@ class TreatmentService(
         }.toTreatmentDto()
     }
 
-    fun getTreatmentById(treatmentId: UUID): TreatmentDto {
+    fun getTreatmentDtoById(treatmentId: UUID): TreatmentDto {
        return treatmentRepository.findById(treatmentId).orElseThrow {
             TreatmentNotFoundException("Treatmetn with id=${treatmentId} not found")
         }.toTreatmentDto()
+    }
+
+    fun getTreatmentById(treatmentId: UUID): Treatment {
+        return treatmentRepository.findById(treatmentId).orElseThrow {
+            TreatmentNotFoundException("Treatmetn with id=${treatmentId} not found")
+        }
     }
 
     fun getAllTreatmentForUser(): List<TreatmentDto> {
